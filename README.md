@@ -1,0 +1,1 @@
+This plugin allows you to edit how the teleporter item drop behaves.
