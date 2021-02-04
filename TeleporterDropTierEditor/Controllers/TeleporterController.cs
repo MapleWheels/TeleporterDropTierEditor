@@ -85,11 +85,13 @@ namespace TeleporterDropTierEditor.Controllers
                             break;
                     }
 
+
                     for (int i = 0; i < baseDropCount * mult; i++)
                         itemDrops.Push(itemPI);
                 }
                 else
                 {
+
                     for (int i=0; i<baseDropCount; i++)
                     {
                         PickupIndex itemPI;
@@ -121,7 +123,6 @@ namespace TeleporterDropTierEditor.Controllers
                                 mult = TeleporterConfig.Tier2DropMultiplier;
                                 break;
                         }
-
                         for (int j = 0; j < mult; j++)
                             itemDrops.Push(itemPI);
                     }

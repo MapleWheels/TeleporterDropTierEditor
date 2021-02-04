@@ -49,7 +49,7 @@ namespace TeleporterDropTierEditor.Configuration
         public static ConfigData<bool> Tier2Drops = new ConfigData<bool>()
         {
             DescriptionString = "Allow Tier 2 (Green) item drops from the teleporter",
-            DefaultValue = false
+            DefaultValue = true
         };
 
         public static ConfigData<float> Tier2DropWeightedChance = new ConfigData<float>()
@@ -93,7 +93,7 @@ namespace TeleporterDropTierEditor.Configuration
         public static ConfigData<bool> TierBossDrops = new ConfigData<bool>()
         {
             DescriptionString = "Allow Tier Boss (Yellow) item drops from the teleporter",
-            DefaultValue = false
+            DefaultValue = true
         };
 
         public static ConfigData<float> TierBossDropWeightedChance = new ConfigData<float>()
