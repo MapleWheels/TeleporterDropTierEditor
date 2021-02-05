@@ -9,7 +9,7 @@ using TeleporterDropTierEditor.Controllers;
 
 namespace TeleporterDropTierEditor
 {
-    [BepInPlugin("com.maplewheels.teleporterdroptiereditor", "Teleporter Drop Tier Editor", "0.0.1")]
+    [BepInPlugin("com.maplewheels.teleporterdroptiereditor", "Teleporter Drop Tier Editor", "0.0.4")]
     [BepInDependency(BepInEx.Extensions.LibraryInfo.BepInDependencyID)]
     [BepInDependency(R2API.R2API.PluginGUID)]
     [R2API.Utils.NetworkCompatibility(R2API.Utils.CompatibilityLevel.EveryoneMustHaveMod)]
@@ -17,7 +17,6 @@ namespace TeleporterDropTierEditor
     {
         void Awake()
         {
-            Logger.LogWarning("DEBUG: LOADING MOD");
             StaticCache<TeleporterController>.value = new TeleporterController();
             StaticCache<TeleporterController>.value.Init(Config, Logger);
         }

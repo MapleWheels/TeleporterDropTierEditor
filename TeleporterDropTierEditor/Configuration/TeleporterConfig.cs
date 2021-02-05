@@ -9,6 +9,11 @@ namespace TeleporterDropTierEditor.Configuration
 {
     public class TeleporterConfig : ConfigDataModel
     {
+        public override void SetDefaults()
+        {
+            SectionName = "General";
+        }
+
         #region GENERAL
         public static ConfigData<bool> Enabled = new ConfigData<bool>()
         {
@@ -34,7 +39,7 @@ namespace TeleporterDropTierEditor.Configuration
         {
             DescriptionString = "The relative weighted chance that the drops are Tier 1 (White), the weight is compared to all other enabled tiers' weights",
             DefaultValue = 1f,
-            AcceptableValues = new AcceptableValueRange<float>(0.1f, float.MaxValue)
+            AcceptableValues = new AcceptableValueRange<float>(0.1f, 100f)
         };
 
         public static ConfigData<int> Tier1DropMultiplier = new ConfigData<int>()
@@ -56,7 +61,7 @@ namespace TeleporterDropTierEditor.Configuration
         {
             DescriptionString = "The relative weighted chance that the drops are Tier 2 (Green), the weight is compared to all other enabled tiers' weights",
             DefaultValue = 1f,
-            AcceptableValues = new AcceptableValueRange<float>(0.1f, float.MaxValue)
+            AcceptableValues = new AcceptableValueRange<float>(0.1f, 100f)
         };
 
         public static ConfigData<int> Tier2DropMultiplier = new ConfigData<int>()
@@ -78,7 +83,7 @@ namespace TeleporterDropTierEditor.Configuration
         {
             DescriptionString = "The relative weighted chance that the drops are Tier 3 (Red), the weight is compared to all other enabled tiers' weights",
             DefaultValue = 1f,
-            AcceptableValues = new AcceptableValueRange<float>(0.1f, float.MaxValue)
+            AcceptableValues = new AcceptableValueRange<float>(0.1f, 100f)
         };
 
         public static ConfigData<int> Tier3DropMultiplier = new ConfigData<int>()
@@ -100,7 +105,7 @@ namespace TeleporterDropTierEditor.Configuration
         {
             DescriptionString = "The relative weighted chance that the drops are Tier Boss (Yellow), the weight is compared to all other enabled tiers' weights",
             DefaultValue = 1f,
-            AcceptableValues = new AcceptableValueRange<float>(0.1f, float.MaxValue)
+            AcceptableValues = new AcceptableValueRange<float>(0.1f, 100f)
         };
 
         public static ConfigData<int> TierBossDropMultiplier = new ConfigData<int>()

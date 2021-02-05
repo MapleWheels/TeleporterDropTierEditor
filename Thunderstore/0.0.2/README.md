@@ -9,7 +9,3 @@ The following options are available:
 Changelog:
  - 0.0.1: Initial Release
  - 0.0.2: Changed target assembly version from netcore 2.0 to netstandard 2.0.
- - 0.0.3: Bugfixes: 
-	- Fixed an issue where no boss drops could cause no items to be spawned. 
-	- Fixed an issue that caused the right tier to not be selected fairly (according to the weight).
- - 0.0.4: Added Hot Reload support (see: ConfigurationManager plugin for BepInEx).

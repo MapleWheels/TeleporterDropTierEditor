@@ -1,0 +1,11 @@
+{
+    "name": "TeleporterDropTierEditor",
+    "version_number": "0.0.3",
+    "website_url": "",
+    "description": "Configure the item tiers' drops and rates for the Teleporter Boss event.",
+    "dependencies": [
+        "tristanmcpherson-R2API-2.5.14",
+		"bbepis-BepInExPack-5.3.1",
+		"MapleWheels-BepInExExtensions-2.3.1"
+    ]
+}

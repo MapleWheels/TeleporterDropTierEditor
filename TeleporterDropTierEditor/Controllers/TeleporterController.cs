@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using TeleporterDropTierEditor.Configuration;
@@ -21,11 +22,20 @@ namespace TeleporterDropTierEditor.Controllers
         protected override void OnPostInit()
         {
             InitTierWeights();
+            TeleporterConfig.Tier1Drops.OnSettingChanged += (object sender, EventArgs e) => { this.InitTierWeights(); };
+            TeleporterConfig.Tier1DropWeightedChance.OnSettingChanged += (object sender, EventArgs e) => { this.InitTierWeights(); };
+            TeleporterConfig.Tier2Drops.OnSettingChanged += (object sender, EventArgs e) => { this.InitTierWeights(); };
+            TeleporterConfig.Tier2DropWeightedChance.OnSettingChanged += (object sender, EventArgs e) => { this.InitTierWeights(); };
+            TeleporterConfig.Tier3Drops.OnSettingChanged += (object sender, EventArgs e) => { this.InitTierWeights(); };
+            TeleporterConfig.Tier3DropWeightedChance.OnSettingChanged += (object sender, EventArgs e) => { this.InitTierWeights(); };
+            TeleporterConfig.TierBossDrops.OnSettingChanged += (object sender, EventArgs e) => { this.InitTierWeights(); };
+            TeleporterConfig.TierBossDropWeightedChance.OnSettingChanged += (object sender, EventArgs e) => { this.InitTierWeights(); };
         }
 
         protected override void OnEnable()
         {
-            On.RoR2.BossGroup.DropRewards += BossGroup_DropRewards;
+            if (TeleporterConfig.Enabled)
+                On.RoR2.BossGroup.DropRewards += BossGroup_DropRewards;
         }
 
         protected override void OnDisable()
@@ -51,13 +61,26 @@ namespace TeleporterDropTierEditor.Controllers
                 t1 = self.rng.NextElementUniform<PickupIndex>(Run.instance.availableTier1DropList);
                 t2 = self.rng.NextElementUniform<PickupIndex>(Run.instance.availableTier2DropList);
                 t3 = self.rng.NextElementUniform<PickupIndex>(Run.instance.availableTier3DropList);
-                tboss = self.rng.NextElementUniform<PickupIndex>(self.bossDrops);
+                if (self.bossDrops.Count > 0)   //Boss drops not guaranteed.
+                    tboss = self.rng.NextElementUniform<PickupIndex>(self.bossDrops);
+                else
+                    tboss = t2;
+
+#if DEBUG
+                Logger.LogWarning($"TELEPDROP::BossGroup..()| t1.Value: {t1.pickupDef.nameToken}");
+                Logger.LogWarning($"TELEPDROP::BossGroup..()| t2.Value: {t2.pickupDef.nameToken}");
+                Logger.LogWarning($"TELEPDROP::BossGroup..()| t3.Value: {t3.pickupDef.nameToken}");
+                Logger.LogWarning($"TELEPDROP::BossGroup..()| tboss.Value: {tboss.pickupDef.nameToken}");
+#endif
 
                 if (TeleporterConfig.DropUniformity)    //only one item type
                 {
+#if DEBUG
+                    Logger.LogWarning($"TELEPDROP::BossGroup..()| Using DropUniformity");
+#endif
                     PickupIndex itemPI;
                     int mult = 0;
-                    switch (GetWeightedChance(this.WeightedTiers))
+                    switch (GetWeightedChance(WeightedTiers))
                     {
                         case ItemTier.Tier1:
                             itemPI = t1;
@@ -91,12 +114,14 @@ namespace TeleporterDropTierEditor.Controllers
                 }
                 else
                 {
-
+#if DEBUG
+                    Logger.LogWarning($"TELEPDROP::BossGroup...()| Not-using DropUniformity.");
+#endif
                     for (int i=0; i<baseDropCount; i++)
                     {
                         PickupIndex itemPI;
                         int mult = 0;
-                        switch (GetWeightedChance(this.WeightedTiers))
+                        switch (GetWeightedChance(WeightedTiers))
                         {
                             case ItemTier.Tier1:
                                 itemPI = t1;
@@ -134,6 +159,9 @@ namespace TeleporterDropTierEditor.Controllers
 
                 while(itemDrops.Count > 0)
                 {
+#if DEBUG
+                    Logger.LogWarning($"TELEPDROP::BossGroup...()| Item to spawn: {itemDrops.Peek().pickupDef.nameToken}");
+#endif
                     PickupDropletController.CreatePickupDroplet(itemDrops.Pop(), self.dropPosition.position, vector);
                     vector = rotation * vector;
                 }
@@ -155,6 +183,9 @@ namespace TeleporterDropTierEditor.Controllers
                         multiplier = TeleporterConfig.Tier2DropMultiplier
                     });
                 totalWeight += TeleporterConfig.Tier1DropWeightedChance;
+#if DEBUG
+                Logger.LogWarning($"TELEPDROP::InitTierWeights() | Tier 1 Weight: {tiers[tiers.Count-1].weight}. TotalWeight-Post: {totalWeight}");
+#endif
             }
             if (TeleporterConfig.Tier2Drops)
             {
@@ -166,6 +197,10 @@ namespace TeleporterDropTierEditor.Controllers
                         multiplier = TeleporterConfig.Tier2DropMultiplier
                     });
                 totalWeight += TeleporterConfig.Tier2DropWeightedChance;
+
+#if DEBUG
+                Logger.LogWarning($"TELEPDROP::InitTierWeights() | Tier 2 Weight: {tiers[tiers.Count - 1].weight}. TotalWeight-Post: {totalWeight}");
+#endif
             }
             if (TeleporterConfig.Tier3Drops)
             {
@@ -177,6 +212,10 @@ namespace TeleporterDropTierEditor.Controllers
                         multiplier = TeleporterConfig.Tier3DropMultiplier
                     });
                 totalWeight += TeleporterConfig.Tier3DropWeightedChance;
+
+#if DEBUG
+                Logger.LogWarning($"TELEPDROP::InitTierWeights() | Tier 3 Weight: {tiers[tiers.Count - 1].weight}. TotalWeight-Post: {totalWeight}");
+#endif
             }
             if (TeleporterConfig.TierBossDrops)
             {
@@ -188,25 +227,62 @@ namespace TeleporterDropTierEditor.Controllers
                         multiplier = TeleporterConfig.TierBossDropMultiplier
                     });
                 totalWeight += TeleporterConfig.TierBossDropWeightedChance;
+
+#if DEBUG
+                Logger.LogWarning($"TELEPDROP::InitTierWeights() | Tier Boss Weight: {tiers[tiers.Count - 1].weight}. TotalWeight-Post: {totalWeight}");
+#endif
             }
 
-            WeightedTiers = tiers.ToArray();
+            WeightedTier[] arr = tiers.OrderBy(t => t.weight).ToArray();
 
-            for(int i=0; i<tiers.Count; i++)
+            for (int i=0; i<arr.Length; i++)
             {
-                WeightedTiers[i].weight /= totalWeight;
+                arr[i].weight /= totalWeight;
+#if DEBUG
+                Logger.LogWarning($"TELEPDROP::InitTierWeights() | Adjusted Tier Weights: Tier: {arr[i].tier} Weight: {arr[i].weight}");
+#endif
             }
+
+            if (arr.Length > 0)    //Else use defaults
+                WeightedTiers = arr;
+            else
+                WeightedTiers = new WeightedTier[]
+                {
+                    //Defaults
+                    new WeightedTier()
+                    {
+                        weight = 1f,
+                        tier = ItemTier.Tier2,
+                        multiplier = 1
+                    }
+                };
+
+#if DEBUG
+            Logger.LogWarning($"TELEPDROP::InitTierWeights()|arr.arrlen: {arr.Length}");
+            Logger.LogWarning($"TELEPDROP::InitTierWeights()|wtiers.arrlen: {WeightedTiers.Length}");
+#endif
         }
 
-        protected static ItemTier GetWeightedChance(params WeightedTier[] options)
+        protected ItemTier GetWeightedChance(params WeightedTier[] options)
         {
             float r = UnityEngine.Random.Range(0f, 1f);
 
-            ItemTier tier;
+#if DEBUG
+            Logger.LogWarning($"TELEPDROP::GetWeightedChance() | RandomGen: {r}");
+            Logger.LogWarning($"TELEPDROP::GetWeightedChance() | options.arrlen: {options.Length}");
+#endif
+
             for (int i = 0; i<options.Length; i++)
             {
-                if (options[i].weight <= r)
+#if DEBUG
+                Logger.LogWarning($"TELEPDROP::GetWeightedChance() | OptionData: tier: {options[i].tier} weight: {options[i].weight}");
+#endif
+
+                if (options[i].weight >= r)
                 {
+#if DEBUG
+                    Logger.LogWarning($"TELEPDROP::GetWeightedChance() | SelectedTier: {options[i].tier}");
+#endif
                     return options[i].tier;
                 }
             }
@@ -221,7 +297,7 @@ namespace TeleporterDropTierEditor.Controllers
             public int multiplier;
         }
 
-        protected WeightedTier[] WeightedTiers = new WeightedTier[]
+        protected static WeightedTier[] WeightedTiers = new WeightedTier[]
         {
             //Defaults
             new WeightedTier()
